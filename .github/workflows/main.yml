@@ -1,0 +1,40 @@
+# Tên của workflow (bạn có thể đặt tùy ý, tên này sẽ hiển thị trên tab Actions)
+name: Run Python Bot Daily
+
+# Phần này quy định KHI NÀO workflow được chạy
+on:
+  # 1. Chạy tự động theo lịch (Cron job)
+  # Lịch dưới đây là chạy vào lúc 0 giờ 0 phút mỗi ngày (theo múi giờ UTC)
+  schedule:
+    - cron: '0 0 * * *'
+    
+  # 2. Cho phép chạy thủ công bằng tay (RẤT QUAN TRỌNG ĐỂ TEST)
+  workflow_dispatch:
+
+# Phần này quy định CHẠY NHƯ THẾ NÀO
+jobs:
+  run-script:
+    # Chạy trên máy chủ ảo Ubuntu mới tinh của GitHub
+    runs-on: ubuntu-latest
+
+    steps:
+      # Bước 1: Tải toàn bộ code từ repo của bạn về máy ảo này
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Bước 2: Cài đặt môi trường Python phiên bản 3.10
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # Bước 3: Cài đặt các thư viện cần thiết (nếu có)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests # Vì code Python của chúng ta dùng thư viện requests
+
+      # Bước 4: Chạy file script.py
+      - name: Execute Bot Script
+        run: |
+          python script.py
